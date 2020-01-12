@@ -25,9 +25,3 @@ For deployement you need heroku account and twilio account
 * [Twilio](https://www.twilio.com) - Chat bot API
 * [Flask](http://flask.palletsprojects.com/en/1.1.x/) - Python web framework
 * [Heroku](https://www.heroku.com) - website hosting services
-
-
-
-
-
-
