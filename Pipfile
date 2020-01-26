@@ -12,6 +12,7 @@ psycopg2 = "*"
 flask-sqlalchemy = "*"
 psycopg2-binary = "*"
 twilio = "*"
+requests = "*"
 
 [requires]
 python_version = "3.7"
