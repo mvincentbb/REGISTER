@@ -1,6 +1,7 @@
-#Registre - bot
-##Description
-this projet is about an WhatApp bot that will fill an database with an orginasation members information(identity, professionnal, association activities)
+# Registre - bot
+
+## Description
+This projet is about an WhatApp bot that will fill an database with an orginasation members information(identity, professionnal, association activities)
 
 
 ## Getting Started
@@ -24,9 +25,3 @@ For deployement you need heroku account and twilio account
 * [Twilio](https://www.twilio.com) - Chat bot API
 * [Flask](http://flask.palletsprojects.com/en/1.1.x/) - Python web framework
 * [Heroku](https://www.heroku.com) - website hosting services
-
-
-
-
-
-
