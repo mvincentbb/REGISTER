@@ -6,10 +6,43 @@ import os
 from urllib.parse import urlparse
 import requests
 from twilio.twiml.messaging_response import MessagingResponse
+from twilio.rest import Client
 #
 app = Flask(__name__)
-# GOOD_BOY_URL = "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80"
-#
+
+
+
+type_message = {1: "Nom",
+                2: "Prenoms",
+                3: {"Sexe": {1: "Masculin", 2: "Féminin"}},
+                4: "Date anniversaire",
+                5: "Quartier",
+                6: "Telephone",
+                7: "Email",
+                8: {"Quel est votre Statut Matrimonial : saisir le numero correspondant "
+                    "*1*  👉🏼 Celibataire"
+                    "*2* 👉🏼 Veuve"
+                    "*3* 👉🏼 Mariee"},
+                9: "Nom du conjoint si marie",
+                10: "Service/Filiere",
+                11: "Formations / Competences",
+                12: "Date de Conversion",
+                13: "Date de Bapteme",
+                14: "Annee d'entree a la chapelle",
+                15: "Annee d'ahesion a la jeunesse",
+                16: {"Celulle": {1: "Va a Bethel", 2: "Mont des Oliviers", 3: "Ebenezer", 4:"Maranatha"}},
+                17: "Activite",
+                18: "Inserer votre image"
+                }
+
+user_dict = {}
+list_of_simpleInput = [2,5,6,9,10,11,17]
+list_of_dateInput=[4,12,13,14,15]
+list_of_multipleChoiceInput=[3,8,16]
+
+
+
+
 # ENV = 'dev'
 #
 # if ENV == 'dev':
@@ -142,35 +175,83 @@ DOWNLOAD_DIRECTORY = 'app_data'
 
 @app.route("/sms", methods=['GET', 'POST'])
 def sms_reply():
-    """Respond to incoming with a simple text message."""
 
+    account_sid = 'AC1bed70d1d2c07937339fd20ff5f3761d'
+    auth_token = 'ee1898e00fc80229b8d8a8a28426afb1'
+    client = Client(account_sid, auth_token)
+    from_ = request.form.get('From')
+    body_ = request.form.get('Body')
+    print(body_)
+    print(request.form)
+    to = from_
     resp = MessagingResponse()
 
-    if request.values['NumMedia'] != '0':
 
-        # Use the message SID as a filename.
-        mime_type = request.values.get(f'MediaContentType0')
-        print("mine_type = ",mime_type)
+    if from_ not in user_dict.keys():
+        user_dict[from_] = {}
 
-        print("minetypes = ", mimetypes)
-        file_extension = mimetypes.guess_extension(mime_type,True)
-        print(file_extension)
+        reponse = type_message[1]
 
-        if (file_extension in['.jpeg','.png','.jpg','.jpe']):
-            filename = request.values['MessageSid'] + '.jpeg'
-            with open('{}/{}'.format(DOWNLOAD_DIRECTORY, filename), 'wb') as f:
-                image_url = request.values['MediaUrl0']
-                f.write(requests.get(image_url).content)
+    compteur_formulaire = len(user_dict[from_])+ 1
+    """Respond to incoming with a simple text message."""
 
-            resp.message("Thanks for the image!")
+    if compteur_formulaire == 1:
+        print (user_dict)
+        # print(request.form.get('body'))
+        print(body_)
+        user_dict[from_][compteur_formulaire]= request.form.get('Body')
+        reponse= type_message[2]
 
+    elif compteur_formulaire == 2:
+        print (user_dict)
+        # print(request.form.get('body'))
+        print(body_)
+        user_dict[from_][2]= request.form.get('Body')
+        reponse = type_message[3]
+
+    elif compteur_formulaire ==3:
+        print (user_dict)
+        # print(request.form.get('body'))
+        print(body_)
+        proposition1 = request.form.get('Body')
+        if proposition1 == 1:
+            user_dict[from_][3] = 'Masculin'
         else:
-            resp.message("votre fichier doit avoir l'extension .jpeg, .png ou .jpg . merci")
+            user_dict[from_][3] = 'Feminin'
+        reponse = type_message[4]
 
-    else:
-        resp.message("Try sending a picture message.")
+    elif compteur_formulaire == 4:
+        user_dict[from_][3]= request.form.get("Body")
+        # print(request.form.get("body"))
+        print(body_)
+        reponse = type_message[5]
+
+
+
+
+
+    if compteur_formulaire in list_of_simpleInput:
+        "ffff"
+    elif compteur_formulaire in list_of_dateInput:
+        "fff"
+
+    elif compteur_formulaire in list_of_multipleChoiceInput :
+        "ddf"
+
+
+    message = client.messages.create(
+        from_='whatsapp:+14155238886',
+        body= reponse ,
+        to=to
+    )
+    print("####", message.sid)
+
+    resp.message("")
 
     return str(resp)
+
+
+
 
     # # if request.values['NumMedia'] != '0':
     # if 1==1:
